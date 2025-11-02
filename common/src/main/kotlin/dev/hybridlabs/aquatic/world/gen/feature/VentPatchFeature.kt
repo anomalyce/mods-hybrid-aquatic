@@ -3,6 +3,7 @@ package dev.hybridlabs.aquatic.world.gen.feature
 import com.mojang.serialization.Codec
 import dev.hybridlabs.aquatic.block.ThermalVentBlock
 import dev.hybridlabs.aquatic.block.TubeWormBlock
+import dev.hybridlabs.aquatic.config.HybridAquaticConfig
 import dev.hybridlabs.aquatic.entity.HybridAquaticEntityTypes
 import dev.hybridlabs.aquatic.tag.HybridAquaticBiomeTags
 import net.minecraft.core.BlockPos
@@ -30,7 +31,6 @@ class VentPatchFeature(codec: Codec<VentPatchFeatureConfig>) : Feature<VentPatch
         const val MAX_VENT_HEIGHT = 5
         const val MIN_VENT_HEIGHT = 2
         const val MIN_VENT_CLEARANCE = 2
-
     }
 
     override fun place(context: FeaturePlaceContext<VentPatchFeatureConfig>): Boolean {
@@ -38,6 +38,7 @@ class VentPatchFeature(codec: Codec<VentPatchFeatureConfig>) : Feature<VentPatch
         val world = context.level()
         val origin = context.origin()
         val random = context.random()
+        val config = HybridAquaticConfig.current()
 
         val (baseProvider, ventProvider, wormProvider, countProvider, radiusProvider, wormCountProvider, wormRadiusProvider, wormCountPerBlockProvider) = context.config()
 
@@ -64,9 +65,11 @@ class VentPatchFeature(codec: Codec<VentPatchFeatureConfig>) : Feature<VentPatch
                     wormProvider
                 )
 
-                val biome = world.getBiome(candidatePos)
-                if (biome.`is`(HybridAquaticBiomeTags.ARCTIC_OCEANS)) {
-                    spawnYetiCrabsAroundVent(world, candidatePos, random, 1, 3)
+                if (!config.disableYetiCrabsAroundVents) {
+                    val biome = world.getBiome(candidatePos)
+                    if (biome.`is`(HybridAquaticBiomeTags.ARCTIC_OCEANS)) {
+                        spawnYetiCrabsAroundVent(world, candidatePos, random, 1, 3)
+                    }
                 }
 
                 generated = true

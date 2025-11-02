@@ -50,6 +50,11 @@ object HybridAquatic : ModInitializer {
         logger.info("Initializing ${Constants.MOD_NAME}")
         CommonClass.init()
 
+        val configHandler = ConfigHelper.initializeConfig(CommonClass.CONFIG_FILE)
+        val config = configHandler.config
+
+        HybridAquaticConfig.update(config)
+
         HybridAquaticBlocks
         HybridAquaticPlatformBlocks
         HybridAquaticEntityTypes
@@ -86,8 +91,7 @@ object HybridAquatic : ModInitializer {
         registerFlammables(FlammableBlockRegistry.getDefaultInstance())
         registerStrippables()
 
-        val configHandler = ConfigHelper.initializeConfig(CommonClass.CONFIG_FILE)
-        registerBiomeModifications(configHandler.config)
+        registerBiomeModifications(config)
 
         SERVER_STARTING.register { server ->
             FabricSpawnModifiers.load(server)
